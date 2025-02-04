@@ -1,14 +1,101 @@
 ﻿namespace GachaSim
 {
-	public class Banner(BannerType BannerType, CharacterOrLightCone fiveStar, List<CharacterOrLightCone> fourStars, int pity = 0, int pityFourStar = 0, bool guarenteeFiveStar = false, bool guarenteeFourStar = false)
+	public static class Banners
+	{
+		#region Banners
+		public static Banner AglaeaCharacterBanner
+		{
+			get;
+			private set;
+		} = ConstructAglaeaCharacterBanner();
+
+		public static Banner AglaeaLightConeBanner
+		{
+			get;
+			private set;
+		} = ConstructAglaeaLightConeBanner();
+
+		public static Banner TribbieCharacterBanner
+		{
+			get;
+			private set;
+		} = ConstructTribbieCharacterBanner();
+
+		public static Banner CastoriceCharacterBanner
+		{
+			get;
+			private set;
+		} = ConstructCastoriceCharacterBanner();
+
+		public static Banner CastoriceLightConeBanner
+		{
+			get;
+			private set;
+		} = ConstructCastoriceLightConeBanner();
+		#endregion
+
+		#region Construct Banners
+		public static Banner ConstructAglaeaCharacterBanner()
+			=> new(BannerType.Character, new("Aglaea", Rarity.FiveStar),
+			[new("Tingyun", Rarity.FourStar), new("Hanya", Rarity.FourStar), new("Sushang", Rarity.FourStar)],
+			pity: 42,
+			pityFourStar: 2,
+			guarenteeFiveStar: true,
+			guarenteeFourStar: false);
+
+		public static Banner ConstructAglaeaLightConeBanner()
+			=> new(BannerType.LightCone, new("Time Woven Into Gold", Rarity.FiveStar),
+			[new("4* Remember", Rarity.FourStar), new("Subscribe for More!", Rarity.FourStar), new("Dance! Dance! Dance!", Rarity.FourStar)],
+			pity: 21,
+			pityFourStar: 2,
+			guarenteeFiveStar: false,
+			guarenteeFourStar: false);
+
+		public static Banner ConstructTribbieCharacterBanner()
+			=> new(BannerType.Character, new("Tribbie", Rarity.FiveStar),
+			[new("Unknown1", Rarity.FourStar), new("Unknown2", Rarity.FourStar), new("Unknown3", Rarity.FourStar)],
+			pity: 35,
+			pityFourStar: 4,
+			guarenteeFiveStar: false,
+			guarenteeFourStar: false);
+
+		public static Banner ConstructCastoriceCharacterBanner()
+			=> new(BannerType.Character, new("Castorice", Rarity.FiveStar),
+			[new("Unknown4", Rarity.FourStar), new("Unknown5", Rarity.FourStar), new("Unknown6", Rarity.FourStar)],
+			pity: 35,
+			pityFourStar: 4,
+			guarenteeFiveStar: false,
+			guarenteeFourStar: false);
+
+		public static Banner ConstructCastoriceLightConeBanner()
+			=> new(BannerType.LightCone, new("Castorice Light Cone", Rarity.FiveStar),
+			[new("Unknown 7", Rarity.FourStar), new("Uknown 8", Rarity.FourStar), new("Unknown 9", Rarity.FourStar)],
+			pity: 3,
+			pityFourStar: 1,
+			guarenteeFiveStar: false,
+			guarenteeFourStar: false);
+		#endregion
+	}
+
+	public class Banner(BannerType bannerType, CharacterOrLightCone fiveStar, List<CharacterOrLightCone> fourStars, int pity = 0, int pityFourStar = 0, bool guarenteeFiveStar = false, bool guarenteeFourStar = false)
 	{
 		public CharacterOrLightCone FiveStar = fiveStar;
 
-		public static readonly CharacterOrLightCone Standard5Star = new("Standard", Rarity.FiveStar);
+		public readonly BannerType BannerType = bannerType;
 
-		public static readonly CharacterOrLightCone Standard4Star = new("Standard", Rarity.FourStar);
+		public static readonly CharacterOrLightCone Standard5StarCharacter = new(Standard5StarCharacterName, Rarity.FiveStar);
+
+		public static readonly CharacterOrLightCone Standard5StarLightCone = new(Standard5StarLightConeName, Rarity.FiveStar);
+
+		public static readonly CharacterOrLightCone Standard4Star = new(Standard4StarName, Rarity.FourStar);
 
 		public static readonly CharacterOrLightCone ThreeStarLightCone = new("Generic LightCone", Rarity.ThreeStar);
+
+		public const string Standard5StarCharacterName = "Standard Character";
+
+		public const string Standard5StarLightConeName = "Standard Light Cone";
+
+		public const string Standard4StarName = "Standard";
 
 		public List<CharacterOrLightCone> FourStarCharacters = fourStars;
 
@@ -64,7 +151,7 @@
 				}
 				else
 				{
-					result = new(Standard5Star, Pity, PityFourStar, GuarenteeFiveStar);
+					result = new(isCharacterBanner ? Standard5StarCharacter : Standard5StarLightCone, Pity, PityFourStar, GuarenteeFiveStar);
 					GuarenteeFiveStar = true;
 					Pity = 0;
 					return result;
@@ -121,7 +208,7 @@
 						return Constants.Stardust.StardustFromDuplicate4StarComplete;
 				}
 
-				if (characterOrLightCone.Name == "Standard")
+				if (IsStandard4Star(characterOrLightCone.Name))
 					return 8;
 
 				CharacterEidolonCatalogue.OwnedCharacters.Add(characterOrLightCone.Name, 1);
@@ -130,5 +217,12 @@
 
 			return Constants.Stardust.StardustFromDuplicate4StarLightCone;
 		}
+
+		public bool IsStandard5Star(string name) => IsStandard5Star(name, BannerType);
+
+		public static bool IsStandard5Star(string name, BannerType bannerType) => name == (bannerType is BannerType.Character ? Standard5StarCharacterName : Standard5StarLightConeName);
+
+
+		public static bool IsStandard4Star(string name) => name == Standard4StarName;
 	}
 }
